@@ -703,6 +703,176 @@ ul{list-style:none}
 .ai-created-notice{background:var(--ok-d);border:1px solid rgba(52,211,153,.25);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--ok);margin-top:6px;display:flex;align-items:center;gap:6px}
 @media(max-width:960px){.ai-wrap{grid-template-columns:1fr;height:calc(100vh - var(--topbar) - 80px - 48px)}.ai-side{display:none}}
 
+/* ════════════════════════════════════════════════════
+   GAMIFICATION SYSTEM
+════════════════════════════════════════════════════ */
+
+/* ── Gamification tokens ─────────────────────────────── */
+:root {
+  --xp:      #F59E0B;
+  --xp-d:    rgba(245,158,11,.15);
+  --coin:    #FBBF24;
+  --lv:      #8B5CF6;
+  --lv-d:    rgba(139,92,246,.15);
+  --streak:  #F97316;
+}
+
+/* ── Topbar XP / streak / coins pills ───────────────── */
+.xp-pill{
+  display:flex;align-items:center;gap:7px;
+  background:var(--raised);border:1px solid var(--bd-hi);
+  border-radius:20px;padding:5px 11px;cursor:pointer;
+  transition:all .18s;white-space:nowrap;
+}
+.xp-pill:hover{border-color:var(--xp);transform:translateY(-1px)}
+.xp-level{font-size:11px;font-weight:800;color:var(--xp);letter-spacing:.04em}
+.xp-bar-wrap{width:72px;height:5px;background:var(--bd-hi);border-radius:3px;overflow:hidden}
+.xp-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--xp),#F97316);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.xp-text{font-size:10px;color:var(--t2);white-space:nowrap}
+.streak-pill{display:flex;align-items:center;gap:4px;background:var(--raised);border:1px solid var(--bd-hi);border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--streak);cursor:pointer;transition:all .18s}
+.streak-pill:hover{border-color:var(--streak);transform:translateY(-1px)}
+.coins-pill{display:flex;align-items:center;gap:4px;background:var(--raised);border:1px solid var(--bd-hi);border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--coin);cursor:pointer;transition:all .18s}
+.coins-pill:hover{border-color:var(--coin);transform:translateY(-1px)}
+
+/* ── Rewards view: hero card ─────────────────────────── */
+.rewards-hero{
+  background:linear-gradient(135deg,#130a3e 0%,#1e1060 40%,#0f2a4a 100%);
+  border-radius:var(--r-lg);padding:28px 32px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+  border:1px solid rgba(139,92,246,.22);
+}
+.rewards-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 85% 50%,rgba(139,92,246,.28) 0%,transparent 65%);pointer-events:none}
+.rh-top{display:flex;align-items:center;gap:24px;position:relative;z-index:1}
+.rh-badge{
+  width:78px;height:78px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#8B5CF6,#F59E0B);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:900;color:#fff;
+  box-shadow:0 0 0 4px rgba(139,92,246,.3),0 0 0 8px rgba(139,92,246,.12);
+  animation:lvPulse 3s ease-in-out infinite;
+}
+@keyframes lvPulse{0%,100%{box-shadow:0 0 0 4px rgba(139,92,246,.3),0 0 0 8px rgba(139,92,246,.12)}50%{box-shadow:0 0 0 6px rgba(139,92,246,.4),0 0 0 14px rgba(139,92,246,.06)}}
+.rh-info{flex:1}
+.rh-eyebrow{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:3px}
+.rh-name{font-size:21px;font-weight:800;color:#fff;margin-bottom:1px}
+.rh-xplbl{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:9px}
+.rh-xp-outer{height:9px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden;margin-bottom:4px}
+.rh-xp-inner{height:100%;border-radius:5px;background:linear-gradient(90deg,#F59E0B,#F97316);transition:width 1.2s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.rh-xp-inner::after{content:'';position:absolute;top:0;left:-60%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.32),transparent);animation:shimProg 2.2s ease infinite}
+.rh-xp-row{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.4)}
+.rh-stats{display:flex;gap:12px;margin-top:18px;position:relative;z-index:1}
+.rh-stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:11px 14px;flex:1;text-align:center;min-width:0}
+.rh-stat-v{font-size:20px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1}
+.rh-stat-l{font-size:10px;color:rgba(255,255,255,.45);margin-top:3px}
+
+/* ── Streak + Coins cards ────────────────────────────── */
+.g-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.streak-card{
+  background:linear-gradient(135deg,rgba(249,115,22,.14),rgba(239,68,68,.08));
+  border:1px solid rgba(249,115,22,.22);border-radius:var(--r-lg);
+  padding:20px;display:flex;align-items:center;gap:14px;
+}
+.streak-flame{font-size:44px;line-height:1;filter:drop-shadow(0 0 10px rgba(249,115,22,.55));animation:flamePulse 1.8s ease-in-out infinite;flex-shrink:0}
+@keyframes flamePulse{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.1) rotate(3deg)}}
+.streak-count{font-size:34px;font-weight:900;color:var(--streak);line-height:1;font-variant-numeric:tabular-nums}
+.streak-lbl{font-size:12.5px;color:var(--t2);margin-top:4px}
+.streak-best{font-size:11px;color:var(--t3);margin-top:5px}
+.coins-card{
+  background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(245,158,11,.07));
+  border:1px solid rgba(251,191,36,.18);border-radius:var(--r-lg);
+  padding:20px;display:flex;align-items:center;gap:14px;
+}
+.coins-icon{font-size:40px;line-height:1;filter:drop-shadow(0 0 10px rgba(251,191,36,.5));flex-shrink:0}
+.coins-count{font-size:34px;font-weight:900;color:var(--coin);line-height:1;font-variant-numeric:tabular-nums}
+.coins-lbl{font-size:12.5px;color:var(--t2);margin-top:4px}
+
+/* ── Daily goal bar ──────────────────────────────────── */
+.daily-goal{background:var(--card);border:1px solid var(--bd);border-radius:var(--r-lg);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.dg-icon{font-size:22px;flex-shrink:0}
+.dg-body{flex:1}
+.dg-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;margin-bottom:7px}
+.dg-sub{font-size:11px;color:var(--t2)}
+.dg-bar{height:7px;background:var(--raised);border-radius:4px;overflow:hidden}
+.dg-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ok),#06B6D4);transition:width .7s ease;position:relative;overflow:hidden}
+.dg-fill::after{content:'';position:absolute;top:0;left:-60%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimProg 2.2s ease infinite}
+
+/* ── Badge grid ──────────────────────────────────────── */
+.badges-section{background:var(--card);border:1px solid var(--bd);border-radius:var(--r-lg);padding:20px}
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px;margin-top:14px}
+.badge-card{
+  background:var(--raised);border:1px solid var(--bd);
+  border-radius:var(--r);padding:14px 10px;
+  text-align:center;position:relative;transition:all .22s;overflow:hidden;
+}
+.badge-card.earned{background:linear-gradient(135deg,var(--raised),rgba(139,92,246,.09));border-color:rgba(139,92,246,.28)}
+.badge-card.earned:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(139,92,246,.2)}
+.badge-card.locked{opacity:.38;filter:grayscale(.6)}
+.badge-icon{font-size:32px;margin-bottom:7px;display:block;line-height:1}
+.badge-card.earned .badge-icon{filter:drop-shadow(0 0 7px rgba(139,92,246,.55))}
+.badge-name{font-size:11.5px;font-weight:700;color:var(--t1);margin-bottom:2px;line-height:1.3}
+.badge-desc{font-size:10px;color:var(--t2);line-height:1.4}
+.badge-tick{position:absolute;top:6px;right:7px;font-size:10px;background:var(--ok-d);color:var(--ok);border-radius:50%;width:17px;height:17px;display:flex;align-items:center;justify-content:center;line-height:1;font-weight:800}
+.badge-card.earned .badge-tick{display:flex}
+.badge-card.locked .badge-tick{display:none}
+
+/* ── Level-up fullscreen overlay ─────────────────────── */
+#lvlup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);z-index:8500;align-items:center;justify-content:center;padding:20px}
+#lvlup.show{display:flex}
+.lvlup-card{
+  background:linear-gradient(145deg,#130a3e,#1e1060,#0f2254);
+  border:2px solid rgba(139,92,246,.45);border-radius:24px;
+  padding:44px 36px;text-align:center;max-width:380px;width:100%;
+  position:relative;overflow:hidden;
+  animation:lvlupPop .55s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes lvlupPop{from{opacity:0;transform:scale(.5) rotate(-4deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+.lvlup-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(139,92,246,.38),transparent);pointer-events:none}
+.lvlup-sparkle{font-size:28px;margin-bottom:14px;animation:sparkFloat 2s ease-in-out infinite}
+@keyframes sparkFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.lvlup-num{font-size:78px;font-weight:900;line-height:1;background:linear-gradient(135deg,#F59E0B,#8B5CF6,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:numPop .55s cubic-bezier(.34,1.56,.64,1) .15s both}
+@keyframes numPop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
+.lvlup-title{font-size:24px;font-weight:800;color:#fff;margin:6px 0 3px}
+.lvlup-sub{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:20px}
+.lvlup-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700;color:var(--xp);margin-bottom:22px}
+.lvlup-unlock{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:22px}
+#lvlup .btn{min-width:140px;z-index:1;position:relative}
+
+/* ── Badge unlock popup (corner) ─────────────────────── */
+#badge-popup{position:fixed;bottom:88px;right:24px;z-index:7500;pointer-events:none;max-width:260px}
+.bp-card{
+  background:linear-gradient(135deg,var(--card),rgba(139,92,246,.1));
+  border:1px solid rgba(139,92,246,.32);border-radius:14px;
+  padding:14px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 12px 36px rgba(0,0,0,.45);pointer-events:all;
+  animation:bpIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes bpIn{from{opacity:0;transform:translateX(50px) scale(.9)}to{opacity:1;transform:translateX(0) scale(1)}}
+.bp-card.out{animation:bpOut .28s ease forwards;pointer-events:none}
+@keyframes bpOut{to{opacity:0;transform:translateX(50px)}}
+.bp-icon{font-size:34px;line-height:1;filter:drop-shadow(0 0 8px rgba(139,92,246,.6));flex-shrink:0}
+.bp-lbl{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--lv);margin-bottom:2px}
+.bp-name{font-size:13px;font-weight:700;color:var(--t1);line-height:1.3}
+.bp-desc{font-size:11px;color:var(--t2);margin-top:2px}
+
+/* ── Floating XP label ───────────────────────────────── */
+.xp-float{position:fixed;pointer-events:none;z-index:9100;font-size:13px;font-weight:800;color:var(--xp);text-shadow:0 1px 6px rgba(0,0,0,.6);animation:xpFloat 1.5s ease forwards}
+@keyframes xpFloat{0%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:1;transform:translateY(-42px) scale(1.1)}100%{opacity:0;transform:translateY(-60px) scale(.9)}}
+
+/* ── Responsive ──────────────────────────────────────── */
+@media(max-width:960px){
+  .g-cards{grid-template-columns:1fr}
+  .rh-stats{flex-wrap:wrap}
+  .rh-stat{min-width:calc(50% - 7px)}
+  .xp-pill .xp-bar-wrap{width:52px}
+  .xp-pill .xp-text{display:none}
+}
+@media(max-width:520px){
+  .rewards-hero{padding:18px}
+  .rh-badge{width:58px;height:58px;font-size:20px}
+  .badges-grid{grid-template-columns:repeat(3,1fr)}
+  .streak-count,.coins-count{font-size:26px}
+}
+
 /* ── App screen entrance ─────────────────────────────── */
 @keyframes appEnter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 #app-screen.entering{animation:appEnter .38s ease both}
@@ -955,6 +1125,9 @@ ul{list-style:none}
       </div>
       <div class="sb-section">
         <div class="sb-section-lbl">Account</div>
+        <div class="nav-item" data-nav="rewards" onclick="navigate('rewards')">
+          <span class="nav-icon">🏆</span> Rewards
+        </div>
         <div class="nav-item" data-nav="profile" onclick="navigate('profile')">
           <span class="nav-icon">👤</span> Profile
         </div>
@@ -988,6 +1161,13 @@ ul{list-style:none}
         <input class="search-input" id="global-search" type="text" placeholder="Search tasks…" oninput="handleSearch(this.value)">
       </div>
       <div class="topbar-right">
+        <div class="streak-pill" onclick="navigate('rewards')" title="Streak">🔥 <span id="tb-streak">0</span></div>
+        <div class="coins-pill" onclick="navigate('rewards')" title="Coins">🪙 <span id="tb-coins">0</span></div>
+        <div class="xp-pill" onclick="navigate('rewards')" title="Level & XP">
+          <span class="xp-level" id="tb-level">Lv 1</span>
+          <div class="xp-bar-wrap"><div class="xp-bar-fill" id="tb-xp-bar" style="width:0%"></div></div>
+          <span class="xp-text" id="tb-xp-text">0 XP</span>
+        </div>
         <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
         <div class="topbar-avatar" id="topbar-avatar" onclick="navigate('profile')">AC</div>
       </div>
@@ -1150,6 +1330,9 @@ ul{list-style:none}
         </div>
       </div>
 
+      <!-- ── Rewards ── -->
+      <div class="view" id="view-rewards"></div>
+
     </main>
   </div>
 
@@ -1165,6 +1348,9 @@ ul{list-style:none}
       <div class="mob-add-btn" onclick="openModal()">+</div>
       <div class="mob-nav-btn" data-mob="ai" onclick="navigate('ai')">
         <span class="nav-icon">✦</span>AI
+      </div>
+      <div class="mob-nav-btn" data-mob="rewards" onclick="navigate('rewards')">
+        <span class="nav-icon">🏆</span>Rewards
       </div>
       <div class="mob-nav-btn" data-mob="profile" onclick="navigate('profile')">
         <span class="nav-icon">👤</span>Profile
@@ -1221,6 +1407,22 @@ ul{list-style:none}
   </div>
 </div>
 
+<!-- ═══ LEVEL-UP OVERLAY ══════════════════════════════════════════ -->
+<div id="lvlup">
+  <div class="lvlup-card">
+    <div class="lvlup-sparkle">✨🌟✨</div>
+    <div class="lvlup-num" id="lvlup-num">2</div>
+    <div class="lvlup-title">Level Up!</div>
+    <div class="lvlup-sub" id="lvlup-rank">You reached <strong id="lvlup-rname">Explorer</strong></div>
+    <div class="lvlup-pill">🎉 +<span id="lvlup-bonus">50</span> Bonus XP</div>
+    <div class="lvlup-unlock" id="lvlup-unlock">Keep completing tasks to unlock more rewards</div>
+    <button class="btn btn-primary" onclick="closeLvlUp()">Awesome! 🚀</button>
+  </div>
+</div>
+
+<!-- ═══ BADGE POPUP ════════════════════════════════════════════════ -->
+<div id="badge-popup"></div>
+
 <!-- ═══ TOASTS ════════════════════════════════════════════════════ -->
 <div id="toasts"></div>
 
@@ -1241,6 +1443,305 @@ const S = {
 };
 
 const CAT_COLORS = { work:'#4F8EF7', study:'#A78BFA', personal:'#FB923C', health:'#34D399' };
+
+/* ══════════════════════════════════════════════════
+   GAMIFICATION STATE
+══════════════════════════════════════════════════ */
+const G = {
+  xp: 0, level: 1, coins: 0,
+  streak: 0, bestStreak: 0, lastDate: null,
+  badges: [], totalDone: 0,
+  todayDone: 0, todayDate: null,
+  dailyGoalHits: 0,
+};
+
+const DAILY_GOAL = 5;
+
+/* XP threshold for level N:  N*(N-1)*100  */
+function xpForLevel(n) { return n <= 1 ? 0 : n * (n - 1) * 100; }
+function levelFromXP(xp) {
+  let lv = 1;
+  while (xpForLevel(lv + 1) <= xp) lv++;
+  return lv;
+}
+const RANK_NAMES = ['','Newcomer','Explorer','Achiever','Challenger','Rising Star',
+  'Skilled','Expert','Elite','Master','Legend','Grandmaster'];
+function rankName(lv) { return RANK_NAMES[Math.min(lv, RANK_NAMES.length - 1)] || 'Grandmaster'; }
+
+const BADGES = [
+  { id:'first_task',    icon:'🌟', name:'First Step',      desc:'Complete your first task' },
+  { id:'streak3',       icon:'🔥', name:'On Fire',         desc:'3-day streak' },
+  { id:'streak7',       icon:'⚔️', name:'Week Warrior',    desc:'7-day streak' },
+  { id:'streak30',      icon:'👑', name:'Monthly Master',  desc:'30-day streak' },
+  { id:'tasks50',       icon:'🎯', name:'Task Master',     desc:'Complete 50 tasks' },
+  { id:'tasks100',      icon:'💯', name:'Century Club',    desc:'Complete 100 tasks' },
+  { id:'level5',        icon:'⭐', name:'Rising Star',     desc:'Reach Level 5' },
+  { id:'level10',       icon:'🏆', name:'Task Legend',     desc:'Reach Level 10' },
+  { id:'early_bird',    icon:'🌅', name:'Early Bird',      desc:'Complete a task before 8 AM' },
+  { id:'night_owl',     icon:'🦉', name:'Night Owl',       desc:'Complete a task after 10 PM' },
+  { id:'goal_crusher',  icon:'💪', name:'Goal Crusher',    desc:'Hit daily goal 3 times' },
+  { id:'coin500',       icon:'🪙', name:'Coin Collector',  desc:'Earn 500 coins' },
+];
+
+function saveG() {
+  if (!S.user) return;
+  localStorage.setItem('tf_gami_' + S.user.id, JSON.stringify(G));
+}
+
+function loadG() {
+  if (!S.user) return;
+  const raw = localStorage.getItem('tf_gami_' + S.user.id);
+  if (raw) {
+    const d = JSON.parse(raw);
+    Object.assign(G, d);
+  } else {
+    G.xp = 0; G.level = 1; G.coins = 0;
+    G.streak = 0; G.bestStreak = 0; G.lastDate = null;
+    G.badges = []; G.totalDone = 0;
+    G.todayDone = 0; G.todayDate = null; G.dailyGoalHits = 0;
+  }
+  // Sync totalDone with actual task data
+  G.totalDone = Math.max(G.totalDone, S.tasks.filter(t => t.done).length);
+  checkStreak();
+  updateGamificationUI();
+}
+
+function checkStreak() {
+  const today = todayStr();
+  if (G.todayDate !== today) {
+    G.todayDone = 0;
+    G.todayDate = today;
+  }
+  // Streak validation: if last activity was 2+ days ago, reset streak
+  if (G.lastDate && G.lastDate !== today) {
+    const last = new Date(G.lastDate);
+    const now = new Date(today);
+    const diff = Math.round((now - last) / 86400000);
+    if (diff > 1) {
+      G.streak = 0;
+    }
+  }
+}
+
+function awardXP(task, checkBtn) {
+  const priXP  = { high: 50, medium: 25, low: 15 };
+  const priCoin = { high: 25, medium: 10, low: 5 };
+  let xpGain   = priXP[task.pri] || 20;
+  let coinGain = priCoin[task.pri] || 8;
+
+  const today = todayStr();
+  if (G.todayDate !== today) { G.todayDone = 0; G.todayDate = today; }
+
+  // Streak bonus
+  if (G.lastDate !== today) {
+    G.lastDate = today;
+    const prevStreak = G.streak;
+    if (prevStreak === 0 || G.lastDate) G.streak++;
+    if (G.streak > G.bestStreak) G.bestStreak = G.streak;
+    xpGain += 10;
+  }
+
+  G.todayDone++;
+
+  // Daily goal bonus
+  if (G.todayDone === DAILY_GOAL) {
+    xpGain  += 100;
+    coinGain += 50;
+    G.dailyGoalHits++;
+    toast('🎯 Daily goal reached! +100 bonus XP', 'success');
+  }
+
+  G.totalDone++;
+  G.xp    += xpGain;
+  G.coins += coinGain;
+
+  // Show floating XP label near the check button
+  if (checkBtn) {
+    const rect = checkBtn.getBoundingClientRect();
+    const el = document.createElement('div');
+    el.className = 'xp-float';
+    el.textContent = '+' + xpGain + ' XP';
+    el.style.left = (rect.left + rect.width / 2 - 20) + 'px';
+    el.style.top  = (rect.top - 10 + window.scrollY) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1600);
+  }
+
+  const prevLevel = G.level;
+  G.level = levelFromXP(G.xp);
+  const leveled = G.level > prevLevel;
+
+  saveG();
+  checkBadges(leveled);
+  updateGamificationUI();
+
+  if (leveled) showLevelUp(G.level);
+}
+
+function revokeXP(task) {
+  const priXP  = { high: 50, medium: 25, low: 15 };
+  const priCoin = { high: 25, medium: 10, low: 5 };
+  G.xp    = Math.max(0, G.xp    - (priXP[task.pri]  || 20));
+  G.coins = Math.max(0, G.coins - (priCoin[task.pri] || 8));
+  G.totalDone = Math.max(0, G.totalDone - 1);
+  G.level = levelFromXP(G.xp);
+  saveG();
+  updateGamificationUI();
+}
+
+function checkBadges(justLeveled) {
+  const add = (id) => {
+    if (!G.badges.includes(id)) {
+      G.badges.push(id);
+      const b = BADGES.find(x => x.id === id);
+      if (b) showBadgePopup(b);
+    }
+  };
+  if (G.totalDone >= 1)  add('first_task');
+  if (G.streak  >= 3)   add('streak3');
+  if (G.streak  >= 7)   add('streak7');
+  if (G.streak  >= 30)  add('streak30');
+  if (G.totalDone >= 50)  add('tasks50');
+  if (G.totalDone >= 100) add('tasks100');
+  if (G.level   >= 5)   add('level5');
+  if (G.level   >= 10)  add('level10');
+  if (G.coins   >= 500) add('coin500');
+  if (G.dailyGoalHits >= 3) add('goal_crusher');
+  const h = new Date().getHours();
+  if (h < 8)  add('early_bird');
+  if (h >= 22) add('night_owl');
+}
+
+function updateGamificationUI() {
+  const lv      = G.level;
+  const cur     = G.xp - xpForLevel(lv);
+  const needed  = xpForLevel(lv + 1) - xpForLevel(lv);
+  const pct     = needed > 0 ? Math.min(100, Math.round(cur / needed * 100)) : 100;
+
+  const tbLevel = document.getElementById('tb-level');
+  const tbBar   = document.getElementById('tb-xp-bar');
+  const tbText  = document.getElementById('tb-xp-text');
+  const tbStr   = document.getElementById('tb-streak');
+  const tbCoin  = document.getElementById('tb-coins');
+  if (tbLevel) tbLevel.textContent = 'Lv ' + lv;
+  if (tbText)  tbText.textContent  = G.xp + ' XP';
+  if (tbStr)   tbStr.textContent   = G.streak;
+  if (tbCoin)  tbCoin.textContent  = G.coins;
+  requestAnimationFrame(() => { requestAnimationFrame(() => {
+    if (tbBar) tbBar.style.width = pct + '%';
+  }); });
+}
+
+function showLevelUp(lv) {
+  const overlay = document.getElementById('lvlup');
+  document.getElementById('lvlup-num').textContent   = lv;
+  document.getElementById('lvlup-rname').textContent = rankName(lv);
+  document.getElementById('lvlup-bonus').textContent = lv * 10;
+  document.getElementById('lvlup-unlock').textContent =
+    lv < 5 ? 'Keep going — badges unlock at Level 5 and 10!' :
+    lv < 10 ? 'You\'re on your way to Task Legend (Level 10)!' :
+    'You\'ve reached elite status. Incredible!';
+  overlay.classList.add('show');
+  triggerConfetti();
+}
+function closeLvlUp() {
+  document.getElementById('lvlup').classList.remove('show');
+}
+
+let _bpTimer = null;
+function showBadgePopup(badge) {
+  const container = document.getElementById('badge-popup');
+  if (!container) return;
+  if (_bpTimer) clearTimeout(_bpTimer);
+
+  container.innerHTML = '<div class="bp-card">' +
+    '<div class="bp-icon">' + badge.icon + '</div>' +
+    '<div><div class="bp-lbl">Badge Unlocked!</div>' +
+    '<div class="bp-name">' + badge.name + '</div>' +
+    '<div class="bp-desc">' + badge.desc + '</div></div></div>';
+  container.style.display = 'block';
+
+  _bpTimer = setTimeout(() => {
+    const card = container.querySelector('.bp-card');
+    if (card) card.classList.add('out');
+    setTimeout(() => { container.style.display = 'none'; container.innerHTML = ''; }, 350);
+  }, 3500);
+}
+
+function renderRewards() {
+  const lv     = G.level;
+  const cur    = G.xp - xpForLevel(lv);
+  const needed = xpForLevel(lv + 1) - xpForLevel(lv);
+  const pct    = needed > 0 ? Math.min(100, Math.round(cur / needed * 100)) : 100;
+  const dgPct  = Math.min(100, Math.round(G.todayDone / DAILY_GOAL * 100));
+
+  const el = document.getElementById('view-rewards');
+  if (!el) return;
+
+  el.innerHTML =
+    '<div class="rewards-hero">' +
+      '<div class="rh-top">' +
+        '<div class="rh-badge" id="rh-badge">' + lv + '</div>' +
+        '<div class="rh-info">' +
+          '<div class="rh-eyebrow">Current Rank</div>' +
+          '<div class="rh-name">' + rankName(lv) + '</div>' +
+          '<div class="rh-xplbl">Level ' + lv + ' — ' + cur + ' / ' + needed + ' XP to next level</div>' +
+          '<div class="rh-xp-outer"><div class="rh-xp-inner" id="rh-xpbar" style="width:0%"></div></div>' +
+          '<div class="rh-xp-row"><span>' + G.xp + ' Total XP</span><span>' + pct + '%</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rh-stats">' +
+        '<div class="rh-stat"><div class="rh-stat-v">' + G.totalDone + '</div><div class="rh-stat-l">Tasks Done</div></div>' +
+        '<div class="rh-stat"><div class="rh-stat-v">' + G.streak + '</div><div class="rh-stat-l">Day Streak</div></div>' +
+        '<div class="rh-stat"><div class="rh-stat-v">' + G.badges.length + '</div><div class="rh-stat-l">Badges</div></div>' +
+        '<div class="rh-stat"><div class="rh-stat-v">' + G.coins + '</div><div class="rh-stat-l">Coins</div></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="daily-goal">' +
+      '<div class="dg-icon">🎯</div>' +
+      '<div class="dg-body">' +
+        '<div class="dg-row"><span>Daily Goal</span><span style="color:var(--ok)">' + G.todayDone + ' / ' + DAILY_GOAL + ' tasks</span></div>' +
+        '<div class="dg-bar"><div class="dg-fill" id="rh-dgbar" style="width:0%"></div></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="g-cards">' +
+      '<div class="streak-card">' +
+        '<div class="streak-flame">🔥</div>' +
+        '<div><div class="streak-count">' + G.streak + '</div>' +
+        '<div class="streak-lbl">Day Streak</div>' +
+        '<div class="streak-best">Best: ' + G.bestStreak + ' days</div></div>' +
+      '</div>' +
+      '<div class="coins-card">' +
+        '<div class="coins-icon">🪙</div>' +
+        '<div><div class="coins-count">' + G.coins + '</div>' +
+        '<div class="coins-lbl">Coins Earned</div></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="badges-section">' +
+      '<div class="section-hd">Achievement Badges <span style="font-size:13px;font-weight:500;color:var(--t2)">(' + G.badges.length + ' / ' + BADGES.length + ' unlocked)</span></div>' +
+      '<div class="badges-grid">' +
+        BADGES.map(b => {
+          const earned = G.badges.includes(b.id);
+          return '<div class="badge-card ' + (earned ? 'earned' : 'locked') + '">' +
+            (earned ? '<div class="badge-tick">✓</div>' : '') +
+            '<span class="badge-icon">' + b.icon + '</span>' +
+            '<div class="badge-name">' + b.name + '</div>' +
+            '<div class="badge-desc">' + b.desc + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+
+  requestAnimationFrame(() => { requestAnimationFrame(() => {
+    const xpBar = document.getElementById('rh-xpbar');
+    const dgBar = document.getElementById('rh-dgbar');
+    if (xpBar) xpBar.style.width = pct + '%';
+    if (dgBar) dgBar.style.width = dgPct + '%';
+  }); });
+}
 
 /* ══════════════════════════════════════════════════
    STORAGE
@@ -1393,6 +1894,7 @@ function enterApp() {
   appEl.classList.add('entering');
   setTimeout(() => appEl.classList.remove('entering'), 400);
   updateUserUI();
+  loadG();
   navigate('dashboard');
   updateBadge();
 }
@@ -1413,8 +1915,8 @@ function updateUserUI() {
 /* ══════════════════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════════════════ */
-const VIEW_TITLES = { dashboard: 'Dashboard', tasks: 'My Tasks', ai: 'AI Assistant', profile: 'Profile' };
-const VIEW_ORDER = { dashboard: 0, tasks: 1, ai: 2, profile: 3 };
+const VIEW_TITLES = { dashboard: 'Dashboard', tasks: 'My Tasks', ai: 'AI Assistant', rewards: '🏆 Rewards', profile: 'Profile' };
+const VIEW_ORDER = { dashboard: 0, tasks: 1, ai: 2, rewards: 3, profile: 4 };
 
 function navigate(view) {
   const prevView = S.currentView;
@@ -1446,6 +1948,7 @@ function navigate(view) {
   if (view === 'dashboard') renderDashboard();
   if (view === 'tasks') renderTasksWithSkeleton();
   if (view === 'profile') renderProfile();
+  if (view === 'rewards') renderRewards();
   if (view === 'ai') initAIView();
 }
 
@@ -1540,7 +2043,13 @@ function toggleDone(id) {
   const t = S.tasks.find(x => x.id === id);
   if (!t) return;
   t.done = !t.done;
-  if (t.done) triggerConfetti();
+  if (t.done) {
+    triggerConfetti();
+    const checkBtn = document.querySelector('.task-card[data-id="' + id + '"] .check-btn');
+    awardXP(t, checkBtn);
+  } else {
+    revokeXP(t);
+  }
   saveTasksToStorage();
   updateBadge();
   const checkBtn = document.querySelector('.task-card[data-id="' + id + '"] .check-btn');
