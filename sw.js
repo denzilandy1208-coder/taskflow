@@ -29,6 +29,7 @@ self.addEventListener('activate', e => {
 /* Files that must never be cached (credentials, auth modules) */
 const NO_CACHE = [
   '/taskflow/firebase-config.js',
+  '/taskflow/emailjs-config.js',
   '/taskflow/auth.js',
 ];
 

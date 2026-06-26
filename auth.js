@@ -56,7 +56,7 @@ let _auth = null;
 export function initFirebase(config) {
   const app = initializeApp(config);
   _auth = getAuth(app);
-  return app;
+  return _auth;
 }
 
 // ══════════════════════════════════════════════════════════════════

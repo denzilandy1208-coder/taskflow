@@ -2281,24 +2281,47 @@ async function doEmailSummary() {
   btn.disabled = true;
   btn.textContent = '…sending';
 
+  const total   = S.tasks.length;
+  const done    = S.tasks.filter(t => t.done).length;
+  const pending = S.tasks.filter(t => !t.done);
+  const overdue = pending.filter(t => t.due && new Date(t.due) < new Date()).length;
+
+  const taskLines = pending.slice(0, 20).map(t => {
+    const pri = { high: '🔴', medium: '🟡', low: '🟢' }[t.priority] || '⚪';
+    const due = t.due ? ` (due ${new Date(t.due).toLocaleDateString()})` : '';
+    return pri + ' ' + t.title + due;
+  }).join('\n');
+
   try {
-    await window.FB.sendTaskSummary({
-      tasks:     S.tasks,
-      userName:  S.user.name,
-      userEmail: S.user.email,
-    });
+    await emailjs.send(
+      window.EJS.serviceId,
+      window.EJS.summaryTemplateId,
+      {
+        to_name:    S.user.name,
+        to_email:   S.user.email,
+        total,
+        done,
+        pending:    pending.length,
+        overdue,
+        task_list:  taskLines || 'No pending tasks — great work!',
+        app_url:    'https://denzilandy1208-coder.github.io/taskflow/',
+      },
+      window.EJS.publicKey
+    );
     btn.textContent = '✓ Sent!';
     toast('Task summary sent to ' + S.user.email, 'ok');
     setTimeout(() => { btn.disabled = false; btn.textContent = orig; }, 3000);
   } catch (e) {
     btn.disabled = false;
     btn.textContent = orig;
-    toast(e.message || 'Failed to send email', 'bad');
+    toast('Email failed — check your EmailJS config', 'bad');
+    console.error('[EmailJS]', e);
   }
 }
 
 // Called by both onAuthStateChanged and doCheckVerification when the user is fully verified
 function _fbHandleVerifiedUser(fbUser) {
+  const isNewUser = !localStorage.getItem('tf_tasks_' + fbUser.uid);
   S.user = {
     id:            fbUser.uid,
     name:          fbUser.displayName || fbUser.email.split('@')[0],
@@ -2313,6 +2336,15 @@ function _fbHandleVerifiedUser(fbUser) {
   }
   stopAuthCanvas();
   enterApp();
+  // Send welcome email on first-ever sign-in (new account)
+  if (isNewUser && window.EJS) {
+    emailjs.send(
+      window.EJS.serviceId,
+      window.EJS.welcomeTemplateId,
+      { to_name: S.user.name, to_email: S.user.email, app_url: 'https://denzilandy1208-coder.github.io/taskflow/' },
+      window.EJS.publicKey
+    ).catch(e => console.warn('[EmailJS] Welcome email failed:', e));
+  }
 }
 
 function enterApp() {
@@ -3853,20 +3885,9 @@ window.addEventListener('DOMContentLoaded', () => {
     refreshUser,
     getFirebaseErrorMessage,
   } from './auth.js';
-  import { getFunctions, httpsCallable }
-    from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-functions.js';
-
   // Initialise Firebase and expose functions to the classic-script scope
-  const fbApp = initFirebase(firebaseConfig);
-  const functions = getFunctions(fbApp);
-  const _sendTaskSummary = httpsCallable(functions, 'sendTaskSummary');
-
-  window.FB = {
-    signUp, signIn, signInGoogle, logOut,
-    resetPassword, resendVerification, refreshUser,
-    getFirebaseErrorMessage,
-    sendTaskSummary: (data) => _sendTaskSummary(data),
-  };
+  initFirebase(firebaseConfig);
+  window.FB = { signUp, signIn, signInGoogle, logOut, resetPassword, resendVerification, refreshUser, getFirebaseErrorMessage };
 
   // Auth state observer — fires immediately on page load with the cached session
   // (or null), and again on every sign-in / sign-out.
@@ -3924,5 +3945,22 @@ window.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 <button id="fab" onclick="toggleFab()" title="Quick actions">＋</button>
+
+<!-- ═══ EMAILJS ═══════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="module">
+  // emailjs-config.js is gitignored — copy emailjs-config.example.js to create it
+  try {
+    const { emailjsConfig } = await import('./emailjs-config.js');
+    emailjs.init(emailjsConfig.publicKey);
+    window.EJS = emailjsConfig;
+    console.log('[EmailJS] Ready');
+  } catch {
+    // emailjs-config.js not present — email features disabled silently
+    window.EJS = null;
+    const btn = document.getElementById('email-summary-btn');
+    if (btn) { btn.title = 'Configure EmailJS to enable this feature'; btn.disabled = true; }
+  }
+</script>
 </body>
 </html>

@@ -1,5 +1,6 @@
-# Firebase credentials — NEVER commit the real config
+# Credentials — NEVER commit the real configs
 firebase-config.js
+emailjs-config.js
 
 # macOS
 .DS_Store
