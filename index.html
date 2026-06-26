@@ -1019,6 +1019,94 @@ ul{list-style:none}
 @media(prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ── Floating Action Button ───────────────────────────── */
+#fab{position:fixed;bottom:84px;right:20px;z-index:700;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#818CF8);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(79,142,247,.5);transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;cursor:pointer;border:none}
+#fab:hover{transform:scale(1.1);box-shadow:0 8px 32px rgba(79,142,247,.65)}
+#fab.open{transform:rotate(45deg)}
+.fab-menu{position:fixed;bottom:148px;right:20px;z-index:699;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.fab-item{display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(14px) scale(.85);transition:opacity .22s,transform .22s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.fab-item.show{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
+.fab-label{background:var(--card);border:1px solid var(--bd-hi);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--t1);white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.fab-btn{width:40px;height:40px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;flex-shrink:0;transition:transform .15s}
+.fab-btn:hover{transform:scale(1.12)}
+@media(min-width:769px){#fab,#fab+.fab-menu,.fab-menu{right:24px;bottom:24px}}
+
+/* ── Voice modal ──────────────────────────────────────── */
+#voice-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(14px);z-index:8000;align-items:center;justify-content:center}
+#voice-overlay.show{display:flex}
+.voice-card{background:var(--card);border:1px solid var(--bd-hi);border-radius:24px;padding:36px 28px 28px;text-align:center;max-width:360px;width:90%;animation:cardIn .4s cubic-bezier(.34,1.56,.64,1)}
+.mic-ring{width:92px;height:92px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#818CF8);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px;position:relative;cursor:pointer;transition:transform .18s;border:none;color:#fff}
+.mic-ring:hover{transform:scale(1.05)}
+.mic-ring.listening{animation:micPulse .9s ease-in-out infinite}
+.mic-ring::before,.mic-ring::after{content:'';position:absolute;inset:-10px;border-radius:50%;border:2px solid var(--accent);opacity:0}
+.mic-ring.listening::before{animation:micRing1 1.6s ease-out infinite}
+.mic-ring.listening::after{animation:micRing2 1.6s ease-out .5s infinite}
+@keyframes micPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes micRing1{0%{inset:-8px;opacity:.5}100%{inset:-34px;opacity:0}}
+@keyframes micRing2{0%{inset:-8px;opacity:.3}100%{inset:-54px;opacity:0}}
+.voice-wave{display:flex;align-items:center;gap:3px;height:28px;justify-content:center;margin:8px 0;opacity:0;transition:opacity .3s}
+.voice-wave.active{opacity:1}
+.wave-bar{width:4px;border-radius:2px;background:var(--accent);animation:waveBounce .9s ease-in-out infinite}
+.wave-bar:nth-child(1){height:8px;animation-delay:0s}.wave-bar:nth-child(2){height:18px;animation-delay:.1s}
+.wave-bar:nth-child(3){height:26px;animation-delay:.2s}.wave-bar:nth-child(4){height:18px;animation-delay:.3s}
+.wave-bar:nth-child(5){height:8px;animation-delay:.4s}
+@keyframes waveBounce{0%,100%{transform:scaleY(.5);opacity:.5}50%{transform:scaleY(1.2);opacity:1}}
+.voice-status{font-size:12.5px;color:var(--t2);min-height:20px;margin-bottom:10px}
+.voice-transcript{font-size:13.5px;color:var(--t1);min-height:50px;padding:12px 14px;background:var(--raised);border-radius:var(--r);margin-bottom:14px;line-height:1.65;text-align:left;border:1px solid var(--bd)}
+.voice-actions{display:flex;gap:10px;justify-content:center}
+
+/* ── Offline indicator ────────────────────────────────── */
+#offline-bar{position:fixed;top:0;left:0;right:0;z-index:9500;background:linear-gradient(90deg,var(--warn),#F97316);color:#1a1a1a;text-align:center;padding:9px 16px;font-size:13px;font-weight:700;transform:translateY(-100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:center;gap:8px}
+#offline-bar.show{transform:translateY(0)}
+
+/* ── Shortcuts dialog ─────────────────────────────────── */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sc-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--raised);border-radius:8px;gap:8px}
+.sc-keys{display:flex;align-items:center;gap:4px;flex-shrink:0}
+kbd{background:var(--bg);border:1px solid var(--bd-hi);border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;font-family:monospace;color:var(--t1);box-shadow:0 2px 0 var(--bd-hi)}
+.sc-desc{font-size:12px;color:var(--t2)}
+@media(max-width:480px){.sc-grid{grid-template-columns:1fr}}
+
+/* ── Export / Backup options ──────────────────────────── */
+.export-opt{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--raised);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:border-color .18s,background .18s;margin-bottom:10px;text-align:left;width:100%}
+.export-opt:hover{border-color:var(--accent);background:var(--acc-d)}
+.export-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.export-lbl{font-size:13.5px;font-weight:600;color:var(--t1)}
+.export-sub{font-size:11.5px;color:var(--t2);margin-top:2px}
+#restore-file-input{display:none}
+
+/* ── Quote card ───────────────────────────────────────── */
+.quote-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r-lg);padding:16px 18px 14px;display:flex;align-items:flex-start;gap:10px;position:relative;margin-bottom:18px;overflow:hidden}
+.quote-mark{font-size:38px;color:var(--acc-d);line-height:.8;font-family:Georgia,serif;flex-shrink:0}
+.quote-body{flex:1;min-width:0}
+.quote-text{font-size:13px;font-style:italic;color:var(--t1);line-height:1.65;padding-right:24px}
+.quote-author{font-size:11px;color:var(--t2);margin-top:6px;font-weight:600}
+.quote-next{position:absolute;right:12px;top:12px;width:26px;height:26px;border-radius:50%;border:1px solid var(--bd);background:var(--raised);font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--t2);cursor:pointer;transition:all .22s}
+.quote-next:hover{border-color:var(--accent);color:var(--accent);transform:rotate(180deg)}
+
+/* ── Weather widget ───────────────────────────────────── */
+.weather-card{background:linear-gradient(135deg,rgba(79,142,247,.1),rgba(129,140,248,.06));border:1px solid rgba(79,142,247,.18);border-radius:var(--r-lg);padding:16px 18px;display:flex;align-items:center;gap:14px;margin-bottom:18px;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.weather-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(79,142,247,.12)}
+.weather-icon{font-size:40px;line-height:1;flex-shrink:0;animation:weatherFloat 4s ease-in-out infinite}
+@keyframes weatherFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.weather-main{flex:1}
+.weather-temp{font-size:30px;font-weight:800;color:var(--t1);line-height:1}
+.weather-cond{font-size:12px;color:var(--t2);margin-top:3px}
+.weather-loc{font-size:11px;color:var(--t3);margin-top:4px}
+.weather-extra{text-align:right;font-size:11.5px;color:var(--t2);line-height:1.8}
+
+/* ── Print styles (PDF export) ────────────────────────── */
+@media print{
+  #auth-screen,.sidebar,#topbar,#mob-nav,#fab,.fab-menu,#offline-bar,
+  #confetti-cv,#toasts,.task-actions,.task-check,#voice-overlay,
+  #shortcuts-overlay,#export-overlay,.modal-overlay{display:none!important}
+  .view{display:none!important}
+  #view-tasks{display:block!important;padding:20px}
+  .task-card{break-inside:avoid;border:1px solid #ccc!important;margin-bottom:8px;box-shadow:none!important}
+  body{background:#fff!important;color:#000!important}
+  @page{margin:20mm}
+}
 </style>
 </head>
 <body>
@@ -1178,6 +1266,8 @@ ul{list-style:none}
 
       <!-- ── Dashboard ── -->
       <div class="view active" id="view-dashboard">
+        <div id="dash-quote"></div>
+        <div id="dash-weather"></div>
         <div class="stats-grid" id="stats-grid">
           <div class="stat-card blue">
             <div class="stat-ico blue">📋</div>
@@ -1428,6 +1518,70 @@ ul{list-style:none}
 
 <!-- ═══ CONFETTI ══════════════════════════════════════════════════ -->
 <canvas id="confetti-cv"></canvas>
+
+<!-- ═══ VOICE MODAL ══════════════════════════════════════════════ -->
+<div id="voice-overlay" onclick="if(event.target===this)closeVoice()">
+  <div class="voice-card">
+    <h3 style="margin:0 0 4px;font-size:17px">🎤 Voice Task Creation</h3>
+    <p style="font-size:12px;color:var(--t2);margin:0 0 20px">Speak your task — title, priority, and due date are parsed automatically</p>
+    <button class="mic-ring" id="mic-btn" onclick="toggleVoice()">🎤</button>
+    <div class="voice-wave" id="voice-wave">
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+    </div>
+    <div class="voice-status" id="voice-status">Tap the mic to start</div>
+    <div class="voice-transcript" id="voice-transcript">Your spoken text will appear here…</div>
+    <div class="voice-actions">
+      <button class="btn-sec" onclick="closeVoice()">Cancel</button>
+      <button class="btn" id="voice-add-btn" onclick="addVoiceTask()" disabled>Add Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SHORTCUTS DIALOG ══════════════════════════════════════ -->
+<div id="shortcuts-overlay" class="modal-overlay" onclick="if(event.target===this)closeShortcuts()" style="display:none">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-hdr"><h3 class="modal-title">⌨ Keyboard Shortcuts</h3><button class="modal-close" onclick="closeShortcuts()">✕</button></div>
+    <div class="sc-grid">
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>N</kbd></div><div class="sc-desc">New task</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>K</kbd></div><div class="sc-desc">Focus search</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>1</kbd></div><div class="sc-desc">Dashboard</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>2</kbd></div><div class="sc-desc">My Tasks</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>3</kbd></div><div class="sc-desc">AI Assistant</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>4</kbd></div><div class="sc-desc">Rewards</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>E</kbd></div><div class="sc-desc">Export tasks</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>B</kbd></div><div class="sc-desc">Backup data</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>M</kbd></div><div class="sc-desc">Voice input</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>/</kbd></div><div class="sc-desc">This dialog</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Ctrl</kbd><kbd>T</kbd></div><div class="sc-desc">Toggle theme</div></div>
+      <div class="sc-row"><div class="sc-keys"><kbd>Esc</kbd></div><div class="sc-desc">Close dialog</div></div>
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd);font-size:11.5px;color:var(--t3);text-align:center">Mac users: use <kbd>⌘</kbd> in place of <kbd>Ctrl</kbd></div>
+  </div>
+</div>
+
+<!-- ═══ EXPORT DIALOG ═════════════════════════════════════════ -->
+<div id="export-overlay" class="modal-overlay" onclick="if(event.target===this)closeExport()" style="display:none">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-hdr"><h3 class="modal-title">📤 Export & Backup</h3><button class="modal-close" onclick="closeExport()">✕</button></div>
+    <button class="export-opt" onclick="exportCSV()">
+      <div class="export-ico" style="background:rgba(52,211,153,.15);color:var(--ok)">📊</div>
+      <div><div class="export-lbl">Export as CSV</div><div class="export-sub">All tasks in spreadsheet format</div></div>
+    </button>
+    <button class="export-opt" onclick="exportPDF()">
+      <div class="export-ico" style="background:rgba(248,113,113,.15);color:var(--bad)">📄</div>
+      <div><div class="export-lbl">Export as PDF</div><div class="export-sub">Print-ready formatted task list</div></div>
+    </button>
+    <button class="export-opt" onclick="backupJSON()">
+      <div class="export-ico" style="background:rgba(79,142,247,.15);color:var(--accent)">💾</div>
+      <div><div class="export-lbl">Backup (JSON)</div><div class="export-sub">Full backup — tasks, settings, XP & streaks</div></div>
+    </button>
+    <button class="export-opt" onclick="document.getElementById('restore-file-input').click()">
+      <div class="export-ico" style="background:rgba(245,158,11,.15);color:var(--xp)">📂</div>
+      <div><div class="export-lbl">Restore from Backup</div><div class="export-sub">Import a previously saved JSON file</div></div>
+    </button>
+    <input type="file" id="restore-file-input" accept=".json" onchange="restoreJSON(event)">
+  </div>
+</div>
 
 <script>
 /* ══════════════════════════════════════════════════
@@ -2119,6 +2273,8 @@ function getFilteredTasks() {
    RENDER: DASHBOARD
 ══════════════════════════════════════════════════ */
 function renderDashboard() {
+  renderQuoteWidget();
+  if (_wx) renderWeatherWidget(); else fetchWeather();
   const today = todayStr();
   const total = S.tasks.length;
   const done = S.tasks.filter(t => t.done).length;
@@ -2795,16 +2951,364 @@ document.addEventListener('click', function(e) {
    KEYBOARD SHORTCUTS
 ══════════════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
-  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-    document.getElementById('global-search').focus();
-    e.preventDefault();
+  const mod = e.metaKey || e.ctrlKey;
+  if (e.key === 'Escape') {
+    closeModal(); closeVoice(); closeExport(); closeShortcuts(); closeFab();
   }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'n' && S.user) {
-    openModal();
-    e.preventDefault();
-  }
+  if (mod && e.key === 'k') { document.getElementById('global-search').focus(); e.preventDefault(); }
+  if (mod && e.key === 'n' && S.user) { openModal(); e.preventDefault(); }
+  if (mod && e.key === '1' && S.user) { navigate('dashboard'); e.preventDefault(); }
+  if (mod && e.key === '2' && S.user) { navigate('tasks'); e.preventDefault(); }
+  if (mod && e.key === '3' && S.user) { navigate('ai'); e.preventDefault(); }
+  if (mod && e.key === '4' && S.user) { navigate('rewards'); e.preventDefault(); }
+  if (mod && e.key === 'e' && S.user) { openExport(); e.preventDefault(); }
+  if (mod && e.key === 'b' && S.user) { backupJSON(); e.preventDefault(); }
+  if (mod && e.key === 'm' && S.user) { openVoice(); e.preventDefault(); }
+  if (mod && e.key === '/' && S.user) { openShortcuts(); e.preventDefault(); }
+  if (mod && e.key === 't') { toggleTheme(); e.preventDefault(); }
 });
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('tf_theme', next);
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = next === 'light' ? '☀' : '🌙';
+}
+
+/* ══════════════════════════════════════════════════
+   FAB MENU
+══════════════════════════════════════════════════ */
+let _fabOpen = false;
+function toggleFab() {
+  _fabOpen = !_fabOpen;
+  document.getElementById('fab').classList.toggle('open', _fabOpen);
+  const items = document.querySelectorAll('#fab-menu .fab-item');
+  items.forEach((el, i) => {
+    const idx = _fabOpen ? i : (items.length - 1 - i);
+    setTimeout(() => el.classList.toggle('show', _fabOpen), idx * 45);
+  });
+}
+function closeFab() {
+  if (!_fabOpen) return;
+  _fabOpen = false;
+  document.getElementById('fab').classList.remove('open');
+  document.querySelectorAll('#fab-menu .fab-item').forEach(el => el.classList.remove('show'));
+}
+document.addEventListener('click', e => {
+  if (_fabOpen && !e.target.closest('#fab') && !e.target.closest('#fab-menu')) closeFab();
+});
+
+/* ══════════════════════════════════════════════════
+   VOICE TASK CREATION
+══════════════════════════════════════════════════ */
+let _recog = null, _voiceText = '', _isListening = false;
+
+function openVoice() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    toast('Voice recognition needs Chrome or Edge.', 'bad'); return;
+  }
+  _voiceText = '';
+  document.getElementById('voice-overlay').classList.add('show');
+  document.getElementById('voice-transcript').textContent = 'Your spoken text will appear here…';
+  document.getElementById('voice-add-btn').disabled = true;
+  document.getElementById('voice-status').textContent = 'Tap the mic to start';
+  const btn = document.getElementById('mic-btn');
+  if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+  document.getElementById('voice-wave').classList.remove('active');
+}
+function closeVoice() {
+  stopListening();
+  document.getElementById('voice-overlay').classList.remove('show');
+}
+function toggleVoice() { _isListening ? stopListening() : startListening(); }
+
+function startListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  _recog = new SR();
+  _recog.continuous = false; _recog.interimResults = true; _recog.lang = 'en-US';
+  _recog.onstart = () => {
+    _isListening = true;
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('voice-wave').classList.add('active');
+    document.getElementById('voice-status').textContent = '🔴 Listening…';
+    document.getElementById('mic-btn').textContent = '⏹';
+  };
+  _recog.onresult = e => {
+    const text = [...e.results].map(r => r[0].transcript).join('');
+    document.getElementById('voice-transcript').textContent = text;
+    if (e.results[e.results.length - 1].isFinal) {
+      _voiceText = text;
+      document.getElementById('voice-add-btn').disabled = false;
+      document.getElementById('voice-status').textContent = '✓ Tap mic to re-record, or Add Task';
+    }
+  };
+  _recog.onerror = err => {
+    document.getElementById('voice-status').textContent = `Error: ${err.error}`;
+    stopListening();
+  };
+  _recog.onend = () => stopListening(true);
+  _recog.start();
+}
+function stopListening(silent) {
+  _isListening = false;
+  if (_recog) { try { _recog.stop(); } catch(e){} _recog = null; }
+  const btn = document.getElementById('mic-btn');
+  if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+  document.getElementById('voice-wave').classList.remove('active');
+  if (!silent && !_voiceText) document.getElementById('voice-status').textContent = 'Tap the mic to start';
+}
+function addVoiceTask() {
+  if (!_voiceText.trim()) return;
+  closeVoice();
+  openModal();
+  setTimeout(() => {
+    document.getElementById('task-title-input').value = extractTitle(_voiceText);
+    document.getElementById('task-cat-input').value  = detectCat(_voiceText)  || 'personal';
+    document.getElementById('task-pri-input').value  = detectPri(_voiceText)  || 'medium';
+    const d = parseDueDate(_voiceText);
+    if (d) document.getElementById('task-due-input').value = d;
+    document.getElementById('task-title-input').focus();
+  }, 120);
+}
+
+/* ══════════════════════════════════════════════════
+   SHORTCUTS DIALOG
+══════════════════════════════════════════════════ */
+function openShortcuts() {
+  const el = document.getElementById('shortcuts-overlay');
+  if (el) { el.style.display = 'flex'; requestAnimationFrame(() => el.classList.add('open')); }
+}
+function closeShortcuts() {
+  const el = document.getElementById('shortcuts-overlay');
+  if (!el) return;
+  el.classList.add('closing');
+  setTimeout(() => { el.style.display = 'none'; el.classList.remove('open','closing'); }, 210);
+}
+
+/* ══════════════════════════════════════════════════
+   EXPORT & BACKUP
+══════════════════════════════════════════════════ */
+function openExport() {
+  const el = document.getElementById('export-overlay');
+  if (el) { el.style.display = 'flex'; requestAnimationFrame(() => el.classList.add('open')); }
+}
+function closeExport() {
+  const el = document.getElementById('export-overlay');
+  if (!el) return;
+  el.classList.add('closing');
+  setTimeout(() => { el.style.display = 'none'; el.classList.remove('open','closing'); }, 210);
+}
+
+function exportCSV() {
+  const headers = ['Title','Description','Priority','Category','Due Date','Status','Created'];
+  const rows = S.tasks.map(t => [
+    `"${(t.title||'').replace(/"/g,'""')}"`,
+    `"${(t.desc||'').replace(/"/g,'""')}"`,
+    t.pri || 'medium',
+    t.cat || 'personal',
+    t.due || '',
+    t.done ? 'Completed' : 'Pending',
+    t.createdAt ? new Date(t.createdAt).toLocaleDateString() : '',
+  ]);
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  _downloadFile(`taskflow-tasks-${todayStr()}.csv`, 'text/csv', csv);
+  closeExport();
+  toast('CSV exported', 'ok');
+}
+
+function exportPDF() {
+  closeExport();
+  const win = window.open('', '_blank');
+  if (!win) { toast('Allow pop-ups to export PDF', 'bad'); return; }
+  const rows = S.tasks.map(t => `<tr>
+    <td>${t.title.replace(/</g,'&lt;')}</td>
+    <td><span style="color:${t.pri==='high'?'#f87171':t.pri==='medium'?'#fbbf24':'#34d399'}">${t.pri}</span></td>
+    <td>${t.cat}</td><td>${t.due||'—'}</td>
+    <td>${t.done?'✓ Done':'Pending'}</td>
+  </tr>`).join('');
+  win.document.write(`<!DOCTYPE html><html><head><title>TaskFlow Export</title>
+  <style>body{font-family:system-ui,sans-serif;padding:32px;color:#111}
+  h1{color:#4F8EF7;font-size:22px;margin-bottom:4px}
+  .meta{color:#666;font-size:13px;margin-bottom:24px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#f0f4ff;text-align:left;padding:10px 12px;border-bottom:2px solid #d0d9ff;font-weight:600}
+  td{padding:9px 12px;border-bottom:1px solid #eee}
+  tr:nth-child(even){background:#fafbff}
+  .hint{margin-top:20px;font-size:12px;color:#999;display:none}
+  @media screen{.hint{display:block}}
+  </style></head><body>
+  <h1>📋 TaskFlow — Task Export</h1>
+  <div class="meta">Exported ${new Date().toLocaleDateString()} · ${S.tasks.length} tasks${S.user?' · '+S.user.name:''}</div>
+  <table><thead><tr><th>Task</th><th>Priority</th><th>Category</th><th>Due</th><th>Status</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <p class="hint">Press <strong>Ctrl+P</strong> (or ⌘+P) to save as PDF</p>
+  <script>window.onload=()=>setTimeout(()=>window.print(),400)</scr`+`ipt></body></html>`);
+  win.document.close();
+}
+
+function backupJSON() {
+  const backup = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    user: S.user,
+    tasks: S.tasks,
+    gamification: JSON.parse(localStorage.getItem('tf_gami_'+(S.user&&S.user.id)) || '{}'),
+    settings: { theme: localStorage.getItem('tf_theme') },
+  };
+  _downloadFile(`taskflow-backup-${todayStr()}.json`, 'application/json', JSON.stringify(backup, null, 2));
+  closeExport();
+  toast('Backup downloaded', 'ok');
+}
+
+function restoreJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data.version || !Array.isArray(data.tasks)) throw new Error('Invalid file');
+      const when = new Date(data.exportedAt).toLocaleString();
+      if (!confirm(`Restore backup from ${when}?\n\nThis replaces your current ${S.tasks.length} tasks with ${data.tasks.length} tasks from the backup.`)) return;
+      S.tasks = data.tasks;
+      saveTasksToStorage();
+      if (data.gamification && S.user) {
+        localStorage.setItem('tf_gami_'+S.user.id, JSON.stringify(data.gamification));
+        loadState(); updateGamificationUI();
+      }
+      renderTasks(); renderDashboard(); closeExport();
+      toast(`Restored ${data.tasks.length} tasks`, 'ok');
+    } catch(err) {
+      toast('Invalid backup file', 'bad');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function _downloadFile(name, type, content) {
+  const blob = new Blob([content], {type});
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), {href: url, download: name});
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ══════════════════════════════════════════════════
+   OFFLINE INDICATOR
+══════════════════════════════════════════════════ */
+function _updateOnline() {
+  document.getElementById('offline-bar').classList.toggle('show', !navigator.onLine);
+}
+window.addEventListener('online',  _updateOnline);
+window.addEventListener('offline', _updateOnline);
+
+/* ══════════════════════════════════════════════════
+   DAILY QUOTES
+══════════════════════════════════════════════════ */
+const QUOTES = [
+  {t:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+  {t:"It always seems impossible until it's done.",a:"Nelson Mandela"},
+  {t:"Don't watch the clock; do what it does — keep going.",a:"Sam Levenson"},
+  {t:"You don't have to be great to start, but you have to start to be great.",a:"Zig Ziglar"},
+  {t:"Focus on being productive instead of busy.",a:"Tim Ferriss"},
+  {t:"The key is not to prioritize your schedule but to schedule your priorities.",a:"Stephen Covey"},
+  {t:"Small daily improvements over time lead to stunning results.",a:"Robin Sharma"},
+  {t:"Done is better than perfect.",a:"Sheryl Sandberg"},
+  {t:"You are what you repeatedly do. Excellence is not an act, but a habit.",a:"Aristotle"},
+  {t:"The way to get started is to quit talking and begin doing.",a:"Walt Disney"},
+  {t:"Success is the sum of small efforts, repeated day in and day out.",a:"Robert Collier"},
+  {t:"Time is what we want most, but what we use worst.",a:"William Penn"},
+  {t:"One day or day one. You decide.",a:"Unknown"},
+  {t:"Discipline is choosing between what you want now and what you want most.",a:"Abraham Lincoln"},
+  {t:"Start where you are. Use what you have. Do what you can.",a:"Arthur Ashe"},
+  {t:"Your future is created by what you do today, not tomorrow.",a:"Robert Kiyosaki"},
+  {t:"Don't count the days, make the days count.",a:"Muhammad Ali"},
+  {t:"Believe you can and you're halfway there.",a:"Theodore Roosevelt"},
+  {t:"Little by little, a little becomes a lot.",a:"Tanzanian Proverb"},
+  {t:"A year from now you may wish you had started today.",a:"Karen Lamb"},
+  {t:"Great things are done by a series of small things brought together.",a:"Vincent Van Gogh"},
+  {t:"The secret of your success is found in your daily routine.",a:"John C. Maxwell"},
+  {t:"Action is the foundational key to all success.",a:"Pablo Picasso"},
+  {t:"Push yourself, because no one else is going to do it for you.",a:"Unknown"},
+  {t:"The harder you work for something, the greater you'll feel when you achieve it.",a:"Unknown"},
+];
+let _qIdx = -1;
+function _getQuote() {
+  if (_qIdx < 0) _qIdx = Math.floor(Date.now() / 86400000) % QUOTES.length;
+  return QUOTES[_qIdx];
+}
+function nextQuote() {
+  _qIdx = (_qIdx + 1) % QUOTES.length;
+  const body = document.querySelector('#dash-quote .quote-body');
+  if (body) {
+    body.style.cssText = 'opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s';
+    setTimeout(() => {
+      renderQuoteWidget();
+      const nb = document.querySelector('#dash-quote .quote-body');
+      if (nb) nb.style.cssText = '';
+    }, 200);
+  }
+}
+function renderQuoteWidget() {
+  const el = document.getElementById('dash-quote');
+  if (!el) return;
+  const q = _getQuote();
+  el.innerHTML = `<div class="quote-card">
+    <div class="quote-mark">"</div>
+    <div class="quote-body">
+      <div class="quote-text">${q.t}</div>
+      <div class="quote-author">— ${q.a}</div>
+    </div>
+    <button class="quote-next" onclick="nextQuote()" title="Next quote">↻</button>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════════
+   WEATHER WIDGET
+══════════════════════════════════════════════════ */
+const WMO_ICON = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈'};
+const WMO_TEXT = {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Foggy',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Slight rain',63:'Moderate rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Showers',81:'Heavy showers',82:'Violent showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm'};
+let _wx = null;
+
+async function fetchWeather() {
+  const el = document.getElementById('dash-weather');
+  if (!el) return;
+  el.innerHTML = `<div class="weather-card" style="cursor:default"><div style="font-size:13px;color:var(--t2);width:100%;text-align:center;padding:8px 0">📡 Loading weather…</div></div>`;
+  try {
+    const pos = await new Promise((ok, fail) => navigator.geolocation.getCurrentPosition(ok, fail, {timeout:8000}));
+    const {latitude: lat, longitude: lon} = pos.coords;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,apparent_temperature,weathercode,windspeed_10m,relative_humidity_2m`;
+    const data = await (await fetch(url)).json();
+    const c = data.current;
+    _wx = {temp: Math.round(c.temperature_2m), feels: Math.round(c.apparent_temperature), code: c.weathercode, wind: Math.round(c.windspeed_10m), hum: c.relative_humidity_2m};
+    renderWeatherWidget();
+  } catch(e) {
+    el.innerHTML = `<div class="weather-card" onclick="fetchWeather()">
+      <div style="font-size:13px;color:var(--t2);width:100%;text-align:center">🌐 Weather unavailable &nbsp;<span style="color:var(--accent);font-size:11px">(tap to retry)</span></div>
+    </div>`;
+  }
+}
+function renderWeatherWidget() {
+  const el = document.getElementById('dash-weather');
+  if (!el || !_wx) return;
+  const icon = WMO_ICON[_wx.code] || '🌡';
+  const cond = WMO_TEXT[_wx.code] || 'Unknown';
+  el.innerHTML = `<div class="weather-card" onclick="fetchWeather()" title="Tap to refresh">
+    <div class="weather-icon">${icon}</div>
+    <div class="weather-main">
+      <div class="weather-temp">${_wx.temp}°C</div>
+      <div class="weather-cond">${cond}</div>
+      <div class="weather-loc">💨 ${_wx.wind} km/h &nbsp;·&nbsp; 💧 ${_wx.hum}%</div>
+    </div>
+    <div class="weather-extra">
+      <span>Feels ${_wx.feels}°C</span>
+      <span style="font-size:10px;color:var(--t3)">Open-Meteo</span>
+    </div>
+  </div>`;
+}
 
 /* ══════════════════════════════════════════════════
    INIT
@@ -2838,5 +3342,29 @@ document.addEventListener('keydown', e => {
   });
 })();
 </script>
+
+<!-- ═══ OFFLINE BAR ══════════════════════════════════════════ -->
+<div id="offline-bar">⚡ You're offline — changes are saved locally and will sync when you reconnect</div>
+
+<!-- ═══ FAB ══════════════════════════════════════════════════ -->
+<div class="fab-menu" id="fab-menu">
+  <div class="fab-item">
+    <span class="fab-label">Keyboard Shortcuts</span>
+    <button class="fab-btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)" onclick="openShortcuts();closeFab()">⌨</button>
+  </div>
+  <div class="fab-item">
+    <span class="fab-label">Export &amp; Backup</span>
+    <button class="fab-btn" style="background:linear-gradient(135deg,var(--ok),#0ea5e9)" onclick="openExport();closeFab()">📤</button>
+  </div>
+  <div class="fab-item">
+    <span class="fab-label">Voice Task</span>
+    <button class="fab-btn" style="background:linear-gradient(135deg,var(--bad),var(--warn))" onclick="openVoice();closeFab()">🎤</button>
+  </div>
+  <div class="fab-item">
+    <span class="fab-label">Add Task</span>
+    <button class="fab-btn" style="background:linear-gradient(135deg,var(--accent),#818cf8)" onclick="openModal();closeFab()">✏</button>
+  </div>
+</div>
+<button id="fab" onclick="toggleFab()" title="Quick actions">＋</button>
 </body>
 </html>
