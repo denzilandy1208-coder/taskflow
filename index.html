@@ -1572,6 +1572,13 @@ kbd{background:var(--bg);border:1px solid var(--bd-hi);border-radius:5px;padding
             </div>
             <div class="settings-row">
               <div>
+                <div class="settings-lbl">Task Summary Email</div>
+                <div class="settings-desc">Send your current tasks to your email</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="email-summary-btn" onclick="doEmailSummary()">📧 Email me</button>
+            </div>
+            <div class="settings-row">
+              <div>
                 <div class="settings-lbl">Account</div>
                 <div class="settings-desc">Manage your account and data</div>
               </div>
@@ -2265,6 +2272,29 @@ async function doLogout() {
   showPanel('login');
   document.getElementById('login-email').value = '';
   document.getElementById('login-pass').value = '';
+}
+
+async function doEmailSummary() {
+  if (!S.user) return;
+  const btn = document.getElementById('email-summary-btn');
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…sending';
+
+  try {
+    await window.FB.sendTaskSummary({
+      tasks:     S.tasks,
+      userName:  S.user.name,
+      userEmail: S.user.email,
+    });
+    btn.textContent = '✓ Sent!';
+    toast('Task summary sent to ' + S.user.email, 'ok');
+    setTimeout(() => { btn.disabled = false; btn.textContent = orig; }, 3000);
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = orig;
+    toast(e.message || 'Failed to send email', 'bad');
+  }
 }
 
 // Called by both onAuthStateChanged and doCheckVerification when the user is fully verified
@@ -3823,10 +3853,20 @@ window.addEventListener('DOMContentLoaded', () => {
     refreshUser,
     getFirebaseErrorMessage,
   } from './auth.js';
+  import { getFunctions, httpsCallable }
+    from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-functions.js';
 
   // Initialise Firebase and expose functions to the classic-script scope
-  initFirebase(firebaseConfig);
-  window.FB = { signUp, signIn, signInGoogle, logOut, resetPassword, resendVerification, refreshUser, getFirebaseErrorMessage };
+  const fbApp = initFirebase(firebaseConfig);
+  const functions = getFunctions(fbApp);
+  const _sendTaskSummary = httpsCallable(functions, 'sendTaskSummary');
+
+  window.FB = {
+    signUp, signIn, signInGoogle, logOut,
+    resetPassword, resendVerification, refreshUser,
+    getFirebaseErrorMessage,
+    sendTaskSummary: (data) => _sendTaskSummary(data),
+  };
 
   // Auth state observer — fires immediately on page load with the cached session
   // (or null), and again on every sign-in / sign-out.

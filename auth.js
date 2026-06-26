@@ -24,7 +24,7 @@
 // To upgrade: update the version string in both import URLs below.
 // Latest versions: https://firebase.google.com/docs/web/learn-more#libraries-cdn
 import { initializeApp }
-  from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+  from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -37,7 +37,7 @@ import {
   updateProfile,
   onAuthStateChanged,
   reload,
-} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+} from 'https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js';
 
 // ── Module-level singleton references ─────────────────────────────
 let _auth = null;
@@ -56,9 +56,7 @@ let _auth = null;
 export function initFirebase(config) {
   const app = initializeApp(config);
   _auth = getAuth(app);
-  // Firebase automatically restores the previous session from
-  // IndexedDB (the default persistence layer) on every page load.
-  return _auth;
+  return app;
 }
 
 // ══════════════════════════════════════════════════════════════════
