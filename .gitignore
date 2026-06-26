@@ -1,0 +1,9 @@
+# Firebase credentials — NEVER commit the real config
+firebase-config.js
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp

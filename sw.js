@@ -26,12 +26,21 @@ self.addEventListener('activate', e => {
   );
 });
 
+/* Files that must never be cached (credentials, auth modules) */
+const NO_CACHE = [
+  '/taskflow/firebase-config.js',
+  '/taskflow/auth.js',
+];
+
 /* Fetch: cache-first for shell assets, network-first for everything else */
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  /* Skip non-GET and cross-origin (weather API, etc.) */
+  /* Skip non-GET and cross-origin (weather API, Firebase CDN, etc.) */
   if (e.request.method !== 'GET' || url.origin !== self.location.origin) return;
+
+  /* Never serve auth / config files from cache */
+  if (NO_CACHE.some(p => url.pathname === p)) return;
 
   e.respondWith(
     caches.match(e.request).then(cached => {

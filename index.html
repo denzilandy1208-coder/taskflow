@@ -212,6 +212,68 @@ ul{list-style:none}
 
 .auth-error{background:var(--bad-d);border:1px solid rgba(248,113,113,.3);color:var(--bad);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
 .auth-error.show{display:block}
+.auth-success{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);color:var(--ok);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+.auth-success.show{display:block}
+
+/* ── Firebase / Google button ────────────────────────── */
+.btn-google {
+  background:#fff;color:#3c4043;
+  border:1px solid #dadce0;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:11px 18px;border-radius:var(--r);
+  font-size:14px;font-weight:500;cursor:pointer;
+  transition:box-shadow .18s,background .18s;
+  margin-bottom:4px;
+}
+.btn-google:hover{box-shadow:0 2px 10px rgba(0,0,0,.14);background:#fafafa}
+.btn-google:active{background:#f1f3f4}
+.btn-google svg{width:18px;height:18px;flex-shrink:0}
+.auth-divider{
+  display:flex;align-items:center;gap:10px;
+  color:var(--t3);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  margin:14px 0;
+}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--bd-hi)}
+.auth-forgot{text-align:right;margin-top:-8px;margin-bottom:12px}
+.auth-forgot a{font-size:12px;color:var(--accent);cursor:pointer}
+.auth-forgot a:hover{text-decoration:underline}
+
+/* ── Email-verification banner ───────────────────────── */
+#verif-banner {
+  display:none;
+  background:rgba(251,191,36,.1);
+  border:1px solid rgba(251,191,36,.35);
+  color:var(--warn);
+  padding:10px 14px;border-radius:8px;
+  font-size:13px;margin-bottom:14px;
+  align-items:center;gap:10px;
+}
+#verif-banner.show{display:flex}
+#verif-banner button{
+  margin-left:auto;padding:4px 10px;
+  border-radius:6px;font-size:12px;font-weight:600;
+  background:rgba(251,191,36,.18);color:var(--warn);
+  border:1px solid rgba(251,191,36,.3);cursor:pointer;
+  white-space:nowrap;
+}
+#verif-banner button:hover{background:rgba(251,191,36,.3)}
+
+/* ── Full-screen Firebase loading overlay ────────────── */
+#fb-loading {
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;
+}
+#fb-loading .fb-spinner {
+  width:40px;height:40px;
+  border:3px solid var(--bd-hi);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+#fb-loading p{color:var(--t2);font-size:13px}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── App Shell ───────────────────────────────────────── */
 #app-screen{display:flex;min-height:100vh}
@@ -1144,7 +1206,7 @@ kbd{background:var(--bg);border:1px solid var(--bd-hi);border-radius:5px;padding
 <body>
 
 <!-- ═══ AUTH SCREEN ═══════════════════════════════════════════════ -->
-<div id="auth-screen">
+<div id="auth-screen" style="display:none">
   <div class="auth-bg"></div>
   <canvas id="aurora-cv"></canvas>
   <canvas id="auth-cv"></canvas>
@@ -1166,6 +1228,20 @@ kbd{background:var(--bg);border:1px solid var(--bd-hi);border-radius:5px;padding
       <div class="auth-title">Welcome back</div>
       <div class="auth-sub">Sign in to your workspace</div>
       <div class="auth-error" id="login-error"></div>
+
+      <!-- Google Sign-In -->
+      <button class="btn-google" id="google-login-btn" onclick="doGoogleSignIn()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="auth-divider">or</div>
+
       <div class="form-field">
         <label class="form-label">Email</label>
         <input class="form-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
@@ -1173,6 +1249,7 @@ kbd{background:var(--bg);border:1px solid var(--bd-hi);border-radius:5px;padding
       <div class="form-field">
         <label class="form-label">Password</label>
         <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+        <div class="auth-forgot"><a onclick="showPanel('forgot')">Forgot password?</a></div>
       </div>
       <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()" style="margin-top:4px">Sign in</button>
       <div class="auth-toggle">No account? <a onclick="showPanel('register')">Create one</a></div>
@@ -1183,6 +1260,20 @@ kbd{background:var(--bg);border:1px solid var(--bd-hi);border-radius:5px;padding
       <div class="auth-title">Create account</div>
       <div class="auth-sub">Start managing your tasks today</div>
       <div class="auth-error" id="reg-error"></div>
+
+      <!-- Google Sign-Up -->
+      <button class="btn-google" id="google-reg-btn" onclick="doGoogleSignIn()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Sign up with Google
+      </button>
+
+      <div class="auth-divider">or</div>
+
       <div class="form-field">
         <label class="form-label">Full name</label>
         <input class="form-input" id="reg-name" type="text" placeholder="Alex Chen" autocomplete="name">
@@ -1202,7 +1293,42 @@ kbd{background:var(--bg);border:1px solid var(--bd-hi);border-radius:5px;padding
       <button class="btn btn-primary btn-full" id="reg-btn" onclick="doRegister()" style="margin-top:4px">Create account</button>
       <div class="auth-toggle">Already have an account? <a onclick="showPanel('login')">Sign in</a></div>
     </div>
+
+    <!-- Forgot Password Panel -->
+    <div class="auth-panel" id="panel-forgot">
+      <div class="auth-title">Reset password</div>
+      <div class="auth-sub">We'll send a reset link to your email</div>
+      <div class="auth-error" id="forgot-error"></div>
+      <div class="auth-success" id="forgot-success"></div>
+      <div class="form-field">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="forgot-email" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <button class="btn btn-primary btn-full" id="forgot-btn" onclick="doForgotPassword()">Send reset link</button>
+      <div class="auth-toggle"><a onclick="showPanel('login')">← Back to sign in</a></div>
+    </div>
+
+    <!-- Email Verification Panel -->
+    <div class="auth-panel" id="panel-verif">
+      <div class="auth-title">Verify your email</div>
+      <div class="auth-sub">Check your inbox and click the link we sent you</div>
+      <div class="auth-error" id="verif-error"></div>
+      <div class="auth-success" id="verif-success"></div>
+      <div style="text-align:center;font-size:40px;margin:18px 0">📬</div>
+      <p style="color:var(--t2);font-size:13px;text-align:center;margin-bottom:20px">A verification email was sent to <strong id="verif-email-display" style="color:var(--t1)"></strong>. Once verified, click below to continue.</p>
+      <button class="btn btn-primary btn-full" id="verif-check-btn" onclick="doCheckVerification()">I've verified — continue</button>
+      <div style="margin-top:10px">
+        <button class="btn btn-ghost btn-full btn-sm" id="verif-resend-btn" onclick="doResendVerification()">Resend email</button>
+      </div>
+      <div class="auth-toggle"><a onclick="doLogout()">Sign out</a></div>
+    </div>
   </div>
+</div>
+
+<!-- Firebase loading overlay (shown while onAuthStateChanged resolves) -->
+<div id="fb-loading">
+  <div class="fb-spinner"></div>
+  <p>Loading…</p>
 </div>
 
 <!-- ═══ APP SCREEN ════════════════════════════════════════════════ -->
@@ -1936,8 +2062,7 @@ function renderRewards() {
    STORAGE
 ══════════════════════════════════════════════════ */
 function loadState() {
-  const u = localStorage.getItem('tf_user');
-  if (u) S.user = JSON.parse(u);
+  // S.user is set by onAuthStateChanged in the Firebase module — don't read tf_user from localStorage
   const t = localStorage.getItem('tf_tasks_' + (S.user?.id || ''));
   S.tasks = t ? JSON.parse(t) : [];
 }
@@ -1945,25 +2070,31 @@ function saveTasksToStorage() {
   if (!S.user) return;
   localStorage.setItem('tf_tasks_' + S.user.id, JSON.stringify(S.tasks));
 }
-function getUsers() {
-  return JSON.parse(localStorage.getItem('tf_users') || '[]');
-}
-function saveUsers(users) {
-  localStorage.setItem('tf_users', JSON.stringify(users));
-}
 
 /* ══════════════════════════════════════════════════
    AUTH
 ══════════════════════════════════════════════════ */
 function showPanel(name) {
   document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
+  const el = document.getElementById('panel-' + name);
+  if (el) el.classList.add('active');
 }
 
-function doLogin() {
+function _authBtnLoading(btn, isLoading, originalText) {
+  if (isLoading) {
+    btn.disabled = true;
+    btn.dataset.origText = btn.textContent;
+    btn.textContent = '…';
+  } else {
+    btn.disabled = false;
+    btn.textContent = originalText || btn.dataset.origText || btn.textContent;
+  }
+}
+
+async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-error');
+  const pass  = document.getElementById('login-pass').value;
+  const err   = document.getElementById('login-error');
   err.classList.remove('show');
 
   if (!email || !pass) {
@@ -1974,41 +2105,25 @@ function doLogin() {
   }
 
   const btn = document.getElementById('login-btn');
-  btn.classList.add('btn-loading');
+  _authBtnLoading(btn, true);
 
-  setTimeout(() => {
-    const users = getUsers();
-    const user = users.find(u => u.email === email && u.pass === btoa(pass));
-    if (!user) {
-      btn.classList.remove('btn-loading');
-      err.textContent = 'Invalid email or password.';
-      err.classList.add('show');
-      shakeCard();
-      return;
-    }
-
-    btn.classList.remove('btn-loading');
-    btn.classList.add('btn-success-anim');
-    btn.textContent = '✓ Welcome back!';
-
-    S.user = { id: user.id, name: user.name, email: user.email };
-    localStorage.setItem('tf_user', JSON.stringify(S.user));
-    loadState();
-    setTimeout(() => {
-      stopAuthCanvas();
-      enterApp();
-      btn.classList.remove('btn-success-anim');
-      btn.textContent = 'Sign in';
-    }, 620);
-  }, 580);
+  try {
+    await window.FB.signIn(email, pass);
+    // onAuthStateChanged handles the rest
+  } catch (e) {
+    err.textContent = window.FB.getFirebaseErrorMessage(e);
+    err.classList.add('show');
+    shakeCard();
+    _authBtnLoading(btn, false, 'Sign in');
+  }
 }
 
-function doRegister() {
-  const name = document.getElementById('reg-name').value.trim();
+async function doRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
-  const pass = document.getElementById('reg-pass').value;
+  const pass  = document.getElementById('reg-pass').value;
   const pass2 = document.getElementById('reg-pass2').value;
-  const err = document.getElementById('reg-error');
+  const err   = document.getElementById('reg-error');
   err.classList.remove('show');
 
   if (!name || !email || !pass) {
@@ -2030,49 +2145,144 @@ function doRegister() {
     return;
   }
 
-  const users = getUsers();
-  if (users.find(u => u.email === email)) {
-    err.textContent = 'This email is already registered.';
+  const btn = document.getElementById('reg-btn');
+  _authBtnLoading(btn, true);
+
+  try {
+    await window.FB.signUp(email, pass, name);
+    // onAuthStateChanged fires → we detect unverified email and show verif panel
+  } catch (e) {
+    err.textContent = window.FB.getFirebaseErrorMessage(e);
     err.classList.add('show');
     shakeCard();
+    _authBtnLoading(btn, false, 'Create account');
+  }
+}
+
+async function doGoogleSignIn() {
+  // Clear any visible errors
+  ['login-error','reg-error'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  try {
+    await window.FB.signInGoogle();
+    // onAuthStateChanged handles the rest
+  } catch (e) {
+    const errEl = document.getElementById('login-error') || document.getElementById('reg-error');
+    if (errEl) {
+      errEl.textContent = window.FB.getFirebaseErrorMessage(e);
+      errEl.classList.add('show');
+    }
+  }
+}
+
+async function doForgotPassword() {
+  const email = document.getElementById('forgot-email').value.trim();
+  const err   = document.getElementById('forgot-error');
+  const ok    = document.getElementById('forgot-success');
+  err.classList.remove('show');
+  ok.classList.remove('show');
+
+  if (!email) {
+    err.textContent = 'Please enter your email address.';
+    err.classList.add('show');
     return;
   }
 
-  const btn = document.getElementById('reg-btn');
-  btn.classList.add('btn-loading');
+  const btn = document.getElementById('forgot-btn');
+  _authBtnLoading(btn, true);
 
-  setTimeout(() => {
-    const user = { id: Date.now().toString(), name, email, pass: btoa(pass) };
-    users.push(user);
-    saveUsers(users);
-
-    S.user = { id: user.id, name, email };
-    localStorage.setItem('tf_user', JSON.stringify(S.user));
-    S.tasks = getSampleTasks();
-    saveTasksToStorage();
-
-    btn.classList.remove('btn-loading');
-    btn.classList.add('btn-success-anim');
-    btn.textContent = '✓ Account created!';
-
-    setTimeout(() => {
-      stopAuthCanvas();
-      enterApp();
-      btn.classList.remove('btn-success-anim');
-      btn.textContent = 'Create account';
-    }, 700);
-  }, 700);
+  try {
+    await window.FB.resetPassword(email);
+    ok.textContent = 'Reset link sent — check your inbox.';
+    ok.classList.add('show');
+  } catch (e) {
+    err.textContent = window.FB.getFirebaseErrorMessage(e);
+    err.classList.add('show');
+  } finally {
+    _authBtnLoading(btn, false, 'Send reset link');
+  }
 }
 
-function doLogout() {
-  localStorage.removeItem('tf_user');
+async function doResendVerification() {
+  const err = document.getElementById('verif-error');
+  const ok  = document.getElementById('verif-success');
+  err.classList.remove('show');
+  ok.classList.remove('show');
+
+  const btn = document.getElementById('verif-resend-btn');
+  _authBtnLoading(btn, true);
+
+  try {
+    await window.FB.resendVerification();
+    ok.textContent = 'Verification email resent — check your inbox.';
+    ok.classList.add('show');
+  } catch (e) {
+    err.textContent = window.FB.getFirebaseErrorMessage(e);
+    err.classList.add('show');
+  } finally {
+    _authBtnLoading(btn, false, 'Resend email');
+  }
+}
+
+async function doCheckVerification() {
+  const err = document.getElementById('verif-error');
+  const ok  = document.getElementById('verif-success');
+  err.classList.remove('show');
+  ok.classList.remove('show');
+
+  const btn = document.getElementById('verif-check-btn');
+  _authBtnLoading(btn, true);
+
+  try {
+    const user = await window.FB.refreshUser();
+    if (user && user.emailVerified) {
+      _fbHandleVerifiedUser(user);
+    } else {
+      err.textContent = 'Email not verified yet — please check your inbox.';
+      err.classList.add('show');
+      _authBtnLoading(btn, false, 'I\'ve verified — continue');
+    }
+  } catch (e) {
+    err.textContent = window.FB.getFirebaseErrorMessage(e);
+    err.classList.add('show');
+    _authBtnLoading(btn, false, 'I\'ve verified — continue');
+  }
+}
+
+async function doLogout() {
+  try {
+    await window.FB.logOut();
+  } catch (e) {
+    console.warn('[TaskFlow] Logout error:', e);
+  }
   S.user = null;
   S.tasks = [];
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'flex';
+  initAuthCanvas();
   showPanel('login');
   document.getElementById('login-email').value = '';
   document.getElementById('login-pass').value = '';
+}
+
+// Called by both onAuthStateChanged and doCheckVerification when the user is fully verified
+function _fbHandleVerifiedUser(fbUser) {
+  S.user = {
+    id:            fbUser.uid,
+    name:          fbUser.displayName || fbUser.email.split('@')[0],
+    email:         fbUser.email,
+    photoURL:      fbUser.photoURL || null,
+    emailVerified: fbUser.emailVerified,
+  };
+  loadState();
+  if (!S.tasks.length) {
+    S.tasks = getSampleTasks();
+    saveTasksToStorage();
+  }
+  stopAuthCanvas();
+  enterApp();
 }
 
 function enterApp() {
@@ -2093,7 +2303,12 @@ function updateUserUI() {
   const initials = S.user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   ['sb-avatar','topbar-avatar','profile-avatar'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.textContent = initials;
+    if (!el) return;
+    if (S.user.photoURL) {
+      el.innerHTML = '<img src="' + S.user.photoURL + '" alt="' + initials + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+    } else {
+      el.textContent = initials;
+    }
   });
   const nameEls = ['sb-name','profile-name'];
   nameEls.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = S.user.name; });
@@ -3544,16 +3759,10 @@ function renderWeatherWidget() {
   const themeBtn = document.getElementById('theme-btn');
   if (themeBtn) themeBtn.textContent = savedTheme === 'light' ? '☀' : '🌙';
 
-  // Check for existing session
-  const u = localStorage.getItem('tf_user');
-  if (u) {
-    S.user = JSON.parse(u);
-    loadState();
-    enterApp();
-  } else {
-    document.getElementById('auth-screen').style.display = 'flex';
-    initAuthCanvas();
-  }
+  // Auth screen and app screen are hidden by default.
+  // The Firebase module's onAuthStateChanged callback (in the <script type="module">
+  // block below) decides which to show once the SDK has resolved the session.
+  // The #fb-loading overlay is visible until that callback fires.
 
   // Enter key on auth forms
   ['login-pass','login-email'].forEach(id => {
@@ -3563,6 +3772,10 @@ function renderWeatherWidget() {
   ['reg-name','reg-email','reg-pass','reg-pass2'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+  });
+  ['forgot-email'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') doForgotPassword(); });
   });
 })();
 </script>
@@ -3592,6 +3805,60 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => navigate(p.get('view')), 600);
   }
 });
+</script>
+
+<!-- ═══ FIREBASE MODULE ═══════════════════════════════════════ -->
+<!-- type="module" so we can use ES import syntax; executes after classic scripts -->
+<script type="module">
+  import { firebaseConfig } from './firebase-config.js';
+  import {
+    initFirebase,
+    watchAuthState,
+    signUp,
+    signIn,
+    signInGoogle,
+    logOut,
+    resetPassword,
+    resendVerification,
+    refreshUser,
+    getFirebaseErrorMessage,
+  } from './auth.js';
+
+  // Initialise Firebase and expose functions to the classic-script scope
+  initFirebase(firebaseConfig);
+  window.FB = { signUp, signIn, signInGoogle, logOut, resetPassword, resendVerification, refreshUser, getFirebaseErrorMessage };
+
+  // Auth state observer — fires immediately on page load with the cached session
+  // (or null), and again on every sign-in / sign-out.
+  watchAuthState(fbUser => {
+    const loadingEl = document.getElementById('fb-loading');
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    if (!fbUser) {
+      // No session — show auth screen
+      S.user = null;
+      S.tasks = [];
+      document.getElementById('app-screen').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+      initAuthCanvas();
+      showPanel('login');
+      return;
+    }
+
+    if (!fbUser.emailVerified && fbUser.providerData[0]?.providerId === 'password') {
+      // Email/password account that hasn't been verified yet — show verif panel
+      document.getElementById('auth-screen').style.display = 'flex';
+      document.getElementById('app-screen').style.display = 'none';
+      initAuthCanvas();
+      const emailEl = document.getElementById('verif-email-display');
+      if (emailEl) emailEl.textContent = fbUser.email;
+      showPanel('verif');
+      return;
+    }
+
+    // Fully authenticated (Google SSO is always verified)
+    _fbHandleVerifiedUser(fbUser);
+  });
 </script>
 
 <!-- ═══ OFFLINE BAR ══════════════════════════════════════════ -->
