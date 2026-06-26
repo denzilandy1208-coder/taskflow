@@ -69,13 +69,15 @@ ul{list-style:none}
   position:absolute;inset:0;
   background:var(--bg);
 }
-/* Aurora WebGL canvas sits directly above the dark base */
+/* Aurora WebGL canvas: above .auth-bg, below particle canvas and card */
 #aurora-cv {
   position:absolute;inset:0;
   width:100%;height:100%;
   pointer-events:none;
   z-index:1;
 }
+/* Particle network sits above the aurora */
+#auth-cv{position:absolute;inset:0;pointer-events:none;opacity:.45;z-index:2}
 .auth-blob {
   position:absolute;
   border-radius:50%;
@@ -926,7 +928,6 @@ ul{list-style:none}
 .topbar-title.changing{animation:titleSlide .2s ease both}
 
 /* ── Auth canvas & geo shapes ───────────────────────── */
-#auth-cv{position:absolute;inset:0;pointer-events:none;opacity:.45;z-index:0}
 .geo{position:absolute;pointer-events:none;opacity:.08;z-index:0}
 .geo-1{width:130px;height:130px;border:2px solid var(--accent);border-radius:22px;top:10%;left:7%;animation:geoSpin 18s linear infinite}
 .geo-2{width:90px;height:90px;border:1.5px solid #A78BFA;border-radius:50%;bottom:14%;right:9%;animation:geoSpin 13s linear infinite reverse}
@@ -3168,15 +3169,6 @@ document.addEventListener('keydown', e => {
   if (mod && e.key === '/' && S.user) { openShortcuts(); e.preventDefault(); }
   if (mod && e.key === 't') { toggleTheme(); e.preventDefault(); }
 });
-
-function toggleTheme() {
-  const cur = document.documentElement.getAttribute('data-theme');
-  const next = cur === 'light' ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('tf_theme', next);
-  const btn = document.getElementById('theme-btn');
-  if (btn) btn.textContent = next === 'light' ? '☀' : '🌙';
-}
 
 /* ══════════════════════════════════════════════════
    FAB MENU
