@@ -2,9 +2,39 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>TaskFlow — Personal Task Manager</title>
+
+<!-- PWA manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Theme & status bar -->
+<meta name="theme-color" content="#4F8EF7">
+<meta name="msapplication-TileColor" content="#0B1120">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TaskFlow">
+<link rel="apple-touch-icon" href="icon-apple.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-apple.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+
+<!-- SEO / share -->
+<meta name="description" content="Personal Task Manager — track tasks, earn XP, build daily streaks">
+<meta name="mobile-web-app-capable" content="yes">
 <style>
+/* ── Safe-area insets (iPhone notch / Dynamic Island / home bar) ── */
+:root {
+  --sat: env(safe-area-inset-top,    0px);
+  --sar: env(safe-area-inset-right,  0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left,   0px);
+}
+
 /* ── Variables ───────────────────────────────────────── */
 :root {
   --bg:      #0B1120;
@@ -267,11 +297,11 @@ ul{list-style:none}
 
 /* ── Topbar ──────────────────────────────────────────── */
 #topbar {
-  height:var(--topbar);
+  height:calc(var(--topbar) + var(--sat));
   background:var(--card);
   border-bottom:1px solid var(--bd);
   display:flex;align-items:center;gap:12px;
-  padding:0 20px 0 24px;
+  padding:var(--sat) 20px 0 24px;
   position:fixed;top:0;
   left:var(--sidebar);right:0;
   z-index:90;
@@ -594,8 +624,9 @@ ul{list-style:none}
 /* ── Mobile nav ──────────────────────────────────────── */
 #mobile-nav{
   display:none;position:fixed;bottom:0;left:0;right:0;
-  height:62px;background:var(--card);border-top:1px solid var(--bd);
-  z-index:100;padding:0 6px;
+  height:calc(62px + var(--sab));
+  background:var(--card);border-top:1px solid var(--bd);
+  z-index:100;padding:0 6px var(--sab);
 }
 .mob-nav-items{display:flex;height:100%;align-items:center;justify-content:space-around}
 .mob-nav-btn{
@@ -3534,6 +3565,33 @@ function renderWeatherWidget() {
     if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
   });
 })();
+</script>
+
+<!-- ═══ SERVICE WORKER ═══════════════════════════════════════ -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const w = reg.installing;
+        w.addEventListener('statechange', () => {
+          if (w.state === 'installed' && navigator.serviceWorker.controller) {
+            toast('Update available — refresh to apply', 'ok');
+          }
+        });
+      });
+    }).catch(err => console.warn('[SW] Registration failed:', err));
+  });
+}
+/* Deep-link shortcuts from manifest: ?action=add, ?view=X */
+window.addEventListener('DOMContentLoaded', () => {
+  const p = new URLSearchParams(location.search);
+  if (p.get('action') === 'add' && typeof openModal === 'function') {
+    setTimeout(openModal, 600);
+  } else if (p.get('view') && typeof navigate === 'function') {
+    setTimeout(() => navigate(p.get('view')), 600);
+  }
+});
 </script>
 
 <!-- ═══ OFFLINE BAR ══════════════════════════════════════════ -->
